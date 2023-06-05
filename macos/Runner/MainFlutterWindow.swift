@@ -1,5 +1,7 @@
 import Cocoa
 import FlutterMacOS
+// TODO uncomment to hide window on startup
+// import window_manager
 
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
@@ -12,4 +14,10 @@ class MainFlutterWindow: NSWindow {
 
     super.awakeFromNib()
   }
+  
+  // TODO uncomment to hide window on startup
+  // override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+  //   super.order(place, relativeTo: otherWin)
+  //   hiddenWindowAtLaunch()
+  // }
 }
