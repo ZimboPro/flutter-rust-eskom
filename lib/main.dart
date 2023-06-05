@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'ffi.dart' if (dart.library.html) 'ffi_web.dart';
 
@@ -8,6 +10,7 @@ void main() async {
 
   const WindowOptions windowOptions = WindowOptions(
       size: Size(800, 600),
+      minimumSize: Size(800, 600),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -20,33 +23,62 @@ void main() async {
   runApp(const MyApp());
 }
 
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      name: "home",
+      path: '/home',
+      builder: (context, state) {
+        final key = state.queryParameters["apiKey"]!;
+        return MyHomePage(apiKey: key);
+      },
+    ),
+    GoRoute(
+      name: "second",
+      path: "/second",
+      builder: (context, state) => const SecondPage(),
+    ),
+    GoRoute(
+      path: "/",
+      name: "splash",
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      name: "Setup",
+      path: "/setup",
+      builder: (context, state) => const SetupPage(),
+    )
+  ],
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routerConfig: _router,
+      // theme: ThemeData(
+      //   // This is the theme of your application.
+      //   //
+      //   // Try running your application with "flutter run". You'll see the
+      //   // application has a blue toolbar. Then, without quitting the app, try
+      //   // changing the primarySwatch below to Colors.green and then invoke
+      //   // "hot reload" (press "r" in the console where you ran "flutter run",
+      //   // or simply save your changes to "hot reload" in a Flutter IDE).
+      //   // Notice that the counter didn't reset back to zero; the application
+      //   // is not restarted.
+      //   primarySwatch: Colors.blue,
+      // ),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.apiKey}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -57,7 +89,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String apiKey;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -103,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text("Home"),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -187,8 +219,78 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
                     return Text('$data second(s)', style: style);
                   // Loading
                   return const CircularProgressIndicator();
-                })
+                }),
+            ElevatedButton(
+                onPressed: () => context.push("/second"), child: Text("Second"))
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class SecondPage extends StatelessWidget {
+  const SecondPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Page"),
+      ),
+      body: Center(
+        child: ElevatedButton(
+            child: Text("Back"), onPressed: () => context.pop(true)),
+      ),
+    );
+  }
+}
+
+const API_KEY = "ESKOM_API_KEY";
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  @override
+  void initState() {
+    super.initState();
+    _prefs.then((value) {
+      final apiKey = value.get(API_KEY);
+      if (apiKey == null) {
+        context.replaceNamed("setup");
+      } else {
+        context.replaceNamed("home", queryParameters: {"apiKey": apiKey});
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Column(
+            children: [Text("Loading details"), CircularProgressIndicator()]),
+      ),
+    );
+  }
+}
+
+class SetupPage extends StatelessWidget {
+  const SetupPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          children: [Text("Setup page")],
         ),
       ),
     );
