@@ -2,6 +2,10 @@
 // When adding new code to your project, note that only items used
 // here will be transformed to their Dart equivalents.
 
+use std::time::Duration;
+
+use flutter_rust_bridge::StreamSink;
+
 // A plain enum without any fields. This is similar to Dart- or C-style enums.
 // flutter_rust_bridge is capable of generating code for enums with fields
 // (@freezed classes in Dart and tagged unions in C).
@@ -56,4 +60,19 @@ pub fn platform() -> Platform {
 // and they are automatically converted to camelCase on the Dart side.
 pub fn rust_release_mode() -> bool {
     cfg!(not(debug_assertions))
+}
+
+const TIME: Duration = Duration::from_secs(1);
+
+pub fn tick(sink: StreamSink<usize>) -> anyhow::Result<()> {
+    let mut ticks = 0;
+    loop {
+        sink.add(ticks);
+        std::thread::sleep(TIME);
+        if ticks == usize::MAX {
+            break;
+        }
+        ticks += 1;
+    }
+    Ok(())
 }

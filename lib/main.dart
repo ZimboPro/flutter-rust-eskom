@@ -53,12 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
   // in the initState method.
   late Future<Platform> platform;
   late Future<bool> isRelease;
+  late Stream<int> ticks;
 
   @override
   void initState() {
     super.initState();
     platform = api.platform();
     isRelease = api.rustReleaseMode();
+    ticks = api.tick();
   }
 
   @override
@@ -139,7 +141,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     'Unknown OS';
                 return Text('$text ($release)', style: style);
               },
-            )
+            ),
+            StreamBuilder<int>(
+                stream: ticks,
+                builder: (context, snap) {
+                  final style = Theme.of(context).textTheme.headlineMedium;
+                  // Error
+                  final error = snap.error;
+                  if (error != null)
+                    return Tooltip(
+                        message: error.toString(),
+                        child: Text('Error', style: style));
+                  // Check data
+                  final data = snap.data;
+                  if (data != null)
+                    return Text('$data second(s)', style: style);
+                  // Loading
+                  return const CircularProgressIndicator();
+                })
           ],
         ),
       ),
