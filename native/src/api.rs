@@ -5,6 +5,7 @@
 use std::time::Duration;
 
 use flutter_rust_bridge::StreamSink;
+use eskom_se_push_api::Endpoint;
 
 // A plain enum without any fields. This is similar to Dart- or C-style enums.
 // flutter_rust_bridge is capable of generating code for enums with fields
@@ -75,4 +76,14 @@ pub fn tick(sink: StreamSink<usize>) -> anyhow::Result<()> {
         ticks += 1;
     }
     Ok(())
+}
+
+pub fn test_api_key(api: String) -> bool {
+    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default().build().unwrap();
+
+    let resp = t.ureq(api.as_str());
+    if let Ok(_response) = resp {
+        return true;
+    }
+    false
 }

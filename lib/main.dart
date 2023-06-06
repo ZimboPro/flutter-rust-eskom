@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'ffi.dart' if (dart.library.html) 'ffi_web.dart';
+import 'screens/setup.dart';
+import 'screens/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -241,57 +242,6 @@ class SecondPage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
             child: Text("Back"), onPressed: () => context.pop(true)),
-      ),
-    );
-  }
-}
-
-const API_KEY = "ESKOM_API_KEY";
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-  @override
-  void initState() {
-    super.initState();
-    _prefs.then((value) {
-      final apiKey = value.get(API_KEY);
-      if (apiKey == null) {
-        context.replaceNamed("setup");
-      } else {
-        context.replaceNamed("home", queryParameters: {"apiKey": apiKey});
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-            children: [Text("Loading details"), CircularProgressIndicator()]),
-      ),
-    );
-  }
-}
-
-class SetupPage extends StatelessWidget {
-  const SetupPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          children: [Text("Setup page")],
-        ),
       ),
     );
   }

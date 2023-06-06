@@ -6,7 +6,7 @@ gen:
         --rust-input native/src/api.rs \
         --dart-output lib/bridge_generated.dart \
         --extra-c-output-path macos/Runner/ \
-        --dart-decl-output lib/bridge_definitions.dart \
+        --dart-decl-output lib/bridge_definitions.dart
 
 # --c-output ios/Runner/bridge_generated.h \
 # --wasm
