@@ -16,9 +16,11 @@ class SetupPage extends StatefulWidget {
 class _SetupPageState extends State<SetupPage> {
   final apiKeyController = TextEditingController();
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   bool isValidApiKey = false;
   bool showErrorMessage = false;
   bool enableTestBtn = false;
+  bool testingKey = false;
 
   @override
   void dispose() {
@@ -34,74 +36,95 @@ class _SetupPageState extends State<SetupPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Enter your Eskom-se-Push API key"),
-            SizedBox(
-              width: 400,
-              child: TextField(
-                autofocus: true,
-                textAlign: TextAlign.center,
-                controller: apiKeyController,
-                onChanged: (value) {
-                  setState(() {
-                    enableTestBtn = value.trim().isNotEmpty;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: ElevatedButton(
-                onPressed: enableTestBtn
-                    ? () async {
-                        setState(() {
-                          showErrorMessage = false;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Testing API key")));
-                        final valid = await api.testApiKey(
-                            api: apiKeyController.value.text.trim());
-                        if (valid) {
-                          _prefs.then((value) => value.setString(
-                              apiPreferenceKey,
-                              apiKeyController.value.text.trim()));
+            Expanded(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Enter your Eskom-se-Push API key"),
+                    SizedBox(
+                      width: 400,
+                      child: TextField(
+                        enabled: !testingKey,
+                        autofocus: true,
+                        textAlign: TextAlign.center,
+                        controller: apiKeyController,
+                        onChanged: (value) {
                           setState(() {
-                            isValidApiKey = true;
-                            showErrorMessage = false;
+                            enableTestBtn = value.trim().isNotEmpty;
                           });
-                        } else {
-                          setState(() {
-                            isValidApiKey = false;
-                            showErrorMessage = true;
-                          });
-                        }
-                      }
-                    : null,
-                child: const Text("Test API Key"),
-              ),
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: ElevatedButton(
+                        onPressed: enableTestBtn && !testingKey
+                            ? () async {
+                                setState(() {
+                                  showErrorMessage = false;
+                                  testingKey = true;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Testing API key")));
+                                final valid = await api.testApiKey(
+                                    api: apiKeyController.value.text.trim());
+                                if (valid) {
+                                  _prefs.then((value) => value.setString(
+                                      apiPreferenceKey,
+                                      apiKeyController.value.text.trim()));
+                                  setState(() {
+                                    isValidApiKey = true;
+                                    showErrorMessage = false;
+                                    testingKey = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isValidApiKey = false;
+                                    showErrorMessage = true;
+                                    testingKey = false;
+                                  });
+                                }
+                              }
+                            : null,
+                        child: const Text("Test API Key"),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: RichText(
+                          text: TextSpan(children: [
+                        const TextSpan(
+                            style: const TextStyle(color: Colors.black),
+                            text:
+                                "If you don't have an API key, you can apply for it "),
+                        TextSpan(
+                            text: "here",
+                            style: const TextStyle(color: Colors.blue),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrlString(
+                                    "https://eskomsepush.gumroad.com/l/api");
+                              })
+                      ])),
+                    ),
+                    shouldShowErrorMsg(),
+                  ]),
             ),
-            RichText(
-                text: TextSpan(children: [
-              const TextSpan(
-                  style: const TextStyle(color: Colors.black),
-                  text: "If you don't have an API key, you can apply for it "),
-              TextSpan(
-                  text: "here",
-                  style: const TextStyle(color: Colors.blue),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      launchUrlString("https://eskomsepush.gumroad.com/l/api");
-                    })
-            ])),
-            ElevatedButton(
-                onPressed:
-                    isValidApiKey ? () => context.replaceNamed("home") : null,
-                child: const Text("Next")),
-            shouldShowErrorMsg(),
-            // ? const Text(
-            //     "Your API key is invalid",
-            //     style: TextStyle(color: Colors.red),
-            //   )
-            // : null,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(50),
+                  child: ElevatedButton(
+                      onPressed: isValidApiKey
+                          ? () => context.replaceNamed("home")
+                          : null,
+                      child: const Text("Next")),
+                )
+              ],
+            )
           ],
         ),
       ),
@@ -115,7 +138,7 @@ class _SetupPageState extends State<SetupPage> {
         style: TextStyle(color: Colors.red),
       );
     } else {
-      return Container();
+      return const Text("");
     }
   }
 }
