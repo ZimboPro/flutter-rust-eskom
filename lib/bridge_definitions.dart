@@ -24,6 +24,112 @@ abstract class Native {
   Future<bool> testApiKey({required String api, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kTestApiKeyConstMeta;
+
+  Future<AllowanceUsage> allowance({required String api, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta;
+
+  Future<List<AreaSearchResult>> areaSearch(
+      {required String api, required String searchTerm, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAreaSearchConstMeta;
+
+  Future<AreaInfoResponse> areaInfo(
+      {required String api, required String areaId, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAreaInfoConstMeta;
+}
+
+class AllowanceUsage {
+  final int limit;
+  final int count;
+  final String accountType;
+
+  const AllowanceUsage({
+    required this.limit,
+    required this.count,
+    required this.accountType,
+  });
+}
+
+class AreaInfoResponse {
+  /// List of sorted events. Will be an empty list if not impacted
+  final List<Event> events;
+
+  /// Info of the region requested for
+  final Info info;
+
+  /// Raw loadshedding schedule, per stage (1-8)
+  /// `Note`: An empty list means no events for that stage
+  /// `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
+  final Schedule schedule;
+
+  const AreaInfoResponse({
+    required this.events,
+    required this.info,
+    required this.schedule,
+  });
+}
+
+class AreaSearchResult {
+  final String areaId;
+  final String name;
+  final String region;
+
+  const AreaSearchResult({
+    required this.areaId,
+    required this.name,
+    required this.region,
+  });
+}
+
+class Day {
+  /// Date the stages are relevant to eg `2022-08-08`
+  final String date;
+
+  /// Day of week eg `Monday`
+  final String name;
+
+  /// Raw loadshedding schedule, per stage (1-8).
+  /// Index 0 refers to `Stage 1`, index 1 is `Stage 2` and so on and so forth.
+  /// Formatted for display purposes `(i.e. 20:00-22:30)`.
+  /// Any adjacent events have been merged into a single event `(e.g. 12:00-14:30 & 14:00-16:30 become 12:00-16:30)`.
+  ///  * `Note`: An empty list means no events for that stage
+  ///  * `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
+  final List<List<String>> stages;
+
+  const Day({
+    required this.date,
+    required this.name,
+    required this.stages,
+  });
+}
+
+class Event {
+  /// End time of the event eg `2022-08-08T22:30:00+02:00`
+  final String end;
+
+  /// The stage of the event eg `Stage 2`
+  final String note;
+
+  /// Start time of the event eg `2022-08-08T20:00:00+02:00`
+  final String start;
+
+  const Event({
+    required this.end,
+    required this.note,
+    required this.start,
+  });
+}
+
+class Info {
+  final String name;
+  final String region;
+
+  const Info({
+    required this.name,
+    required this.region,
+  });
 }
 
 enum Platform {
@@ -35,4 +141,17 @@ enum Platform {
   MacIntel,
   MacApple,
   Wasm,
+}
+
+class Schedule {
+  /// Vec of the days and there stages
+  final List<Day> days;
+
+  /// Where the data was retrieved from.
+  final String source;
+
+  const Schedule({
+    required this.days,
+    required this.source,
+  });
 }

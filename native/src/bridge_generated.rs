@@ -64,6 +64,55 @@ fn wire_test_api_key_impl(port_: MessagePort, api: impl Wire2Api<String> + Unwin
         },
     )
 }
+fn wire_allowance_impl(port_: MessagePort, api: impl Wire2Api<String> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "allowance",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_api = api.wire2api();
+            move |task_callback| allowance(api_api)
+        },
+    )
+}
+fn wire_area_search_impl(
+    port_: MessagePort,
+    api: impl Wire2Api<String> + UnwindSafe,
+    search_term: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "area_search",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_api = api.wire2api();
+            let api_search_term = search_term.wire2api();
+            move |task_callback| area_search(api_api, api_search_term)
+        },
+    )
+}
+fn wire_area_info_impl(
+    port_: MessagePort,
+    api: impl Wire2Api<String> + UnwindSafe,
+    area_id: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "area_info",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_api = api.wire2api();
+            let api_area_id = area_id.wire2api();
+            move |task_callback| area_info(api_api, api_area_id)
+        },
+    )
+}
 // Section: wrapper structs
 
 // Section: static checks
@@ -95,6 +144,73 @@ impl Wire2Api<u8> for u8 {
 
 // Section: impl IntoDart
 
+impl support::IntoDart for AllowanceUsage {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.limit.into_dart(),
+            self.count.into_dart(),
+            self.account_type.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for AllowanceUsage {}
+
+impl support::IntoDart for AreaInfoResponse {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.events.into_dart(),
+            self.info.into_dart(),
+            self.schedule.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for AreaInfoResponse {}
+
+impl support::IntoDart for AreaSearchResult {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.area_id.into_dart(),
+            self.name.into_dart(),
+            self.region.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for AreaSearchResult {}
+
+impl support::IntoDart for Day {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.date.into_dart(),
+            self.name.into_dart(),
+            self.stages.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Day {}
+
+impl support::IntoDart for Event {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.end.into_dart(),
+            self.note.into_dart(),
+            self.start.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Event {}
+
+impl support::IntoDart for Info {
+    fn into_dart(self) -> support::DartAbi {
+        vec![self.name.into_dart(), self.region.into_dart()].into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Info {}
+
 impl support::IntoDart for Platform {
     fn into_dart(self) -> support::DartAbi {
         match self {
@@ -111,6 +227,12 @@ impl support::IntoDart for Platform {
     }
 }
 impl support::IntoDartExceptPrimitive for Platform {}
+impl support::IntoDart for Schedule {
+    fn into_dart(self) -> support::DartAbi {
+        vec![self.days.into_dart(), self.source.into_dart()].into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Schedule {}
 
 // Section: executor
 

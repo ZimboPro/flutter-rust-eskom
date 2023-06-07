@@ -91,21 +91,187 @@ class NativeImpl implements Native {
         argNames: ["api"],
       );
 
+  Future<AllowanceUsage> allowance({required String api, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(api);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_allowance(port_, arg0),
+      parseSuccessData: _wire2api_allowance_usage,
+      constMeta: kAllowanceConstMeta,
+      argValues: [api],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "allowance",
+        argNames: ["api"],
+      );
+
+  Future<List<AreaSearchResult>> areaSearch(
+      {required String api, required String searchTerm, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(api);
+    var arg1 = _platform.api2wire_String(searchTerm);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_area_search(port_, arg0, arg1),
+      parseSuccessData: _wire2api_list_area_search_result,
+      constMeta: kAreaSearchConstMeta,
+      argValues: [api, searchTerm],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAreaSearchConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "area_search",
+        argNames: ["api", "searchTerm"],
+      );
+
+  Future<AreaInfoResponse> areaInfo(
+      {required String api, required String areaId, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(api);
+    var arg1 = _platform.api2wire_String(areaId);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_area_info(port_, arg0, arg1),
+      parseSuccessData: _wire2api_area_info_response,
+      constMeta: kAreaInfoConstMeta,
+      argValues: [api, areaId],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAreaInfoConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "area_info",
+        argNames: ["api", "areaId"],
+      );
+
   void dispose() {
     _platform.dispose();
   }
 // Section: wire2api
 
+  String _wire2api_String(dynamic raw) {
+    return raw as String;
+  }
+
+  List<String> _wire2api_StringList(dynamic raw) {
+    return (raw as List<dynamic>).cast<String>();
+  }
+
+  AllowanceUsage _wire2api_allowance_usage(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AllowanceUsage(
+      limit: _wire2api_i64(arr[0]),
+      count: _wire2api_i64(arr[1]),
+      accountType: _wire2api_String(arr[2]),
+    );
+  }
+
+  AreaInfoResponse _wire2api_area_info_response(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AreaInfoResponse(
+      events: _wire2api_list_event(arr[0]),
+      info: _wire2api_info(arr[1]),
+      schedule: _wire2api_schedule(arr[2]),
+    );
+  }
+
+  AreaSearchResult _wire2api_area_search_result(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AreaSearchResult(
+      areaId: _wire2api_String(arr[0]),
+      name: _wire2api_String(arr[1]),
+      region: _wire2api_String(arr[2]),
+    );
+  }
+
   bool _wire2api_bool(dynamic raw) {
     return raw as bool;
+  }
+
+  Day _wire2api_day(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return Day(
+      date: _wire2api_String(arr[0]),
+      name: _wire2api_String(arr[1]),
+      stages: _wire2api_list_StringList(arr[2]),
+    );
+  }
+
+  Event _wire2api_event(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return Event(
+      end: _wire2api_String(arr[0]),
+      note: _wire2api_String(arr[1]),
+      start: _wire2api_String(arr[2]),
+    );
   }
 
   int _wire2api_i32(dynamic raw) {
     return raw as int;
   }
 
+  int _wire2api_i64(dynamic raw) {
+    return castInt(raw);
+  }
+
+  Info _wire2api_info(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Info(
+      name: _wire2api_String(arr[0]),
+      region: _wire2api_String(arr[1]),
+    );
+  }
+
+  List<List<String>> _wire2api_list_StringList(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_StringList).toList();
+  }
+
+  List<AreaSearchResult> _wire2api_list_area_search_result(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_area_search_result).toList();
+  }
+
+  List<Day> _wire2api_list_day(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_day).toList();
+  }
+
+  List<Event> _wire2api_list_event(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_event).toList();
+  }
+
   Platform _wire2api_platform(dynamic raw) {
     return Platform.values[raw as int];
+  }
+
+  Schedule _wire2api_schedule(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Schedule(
+      days: _wire2api_list_day(arr[0]),
+      source: _wire2api_String(arr[1]),
+    );
+  }
+
+  int _wire2api_u8(dynamic raw) {
+    return raw as int;
+  }
+
+  Uint8List _wire2api_uint_8_list(dynamic raw) {
+    return raw as Uint8List;
   }
 
   int _wire2api_usize(dynamic raw) {
@@ -295,6 +461,63 @@ class NativeWire implements FlutterRustBridgeWireBase {
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_test_api_key');
   late final _wire_test_api_key = _wire_test_api_keyPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_allowance(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> api,
+  ) {
+    return _wire_allowance(
+      port_,
+      api,
+    );
+  }
+
+  late final _wire_allowancePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_allowance');
+  late final _wire_allowance = _wire_allowancePtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_area_search(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> search_term,
+  ) {
+    return _wire_area_search(
+      port_,
+      api,
+      search_term,
+    );
+  }
+
+  late final _wire_area_searchPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_area_search');
+  late final _wire_area_search = _wire_area_searchPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_area_info(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> area_id,
+  ) {
+    return _wire_area_info(
+      port_,
+      api,
+      area_id,
+    );
+  }
+
+  late final _wire_area_infoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_area_info');
+  late final _wire_area_info = _wire_area_infoPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,

@@ -4,6 +4,7 @@
 
 use std::time::Duration;
 
+use eskom_se_push_api::allowance::Allowance;
 use flutter_rust_bridge::StreamSink;
 use eskom_se_push_api::Endpoint;
 
@@ -87,3 +88,150 @@ pub fn test_api_key(api: String) -> bool {
     }
     false
 }
+
+#[derive(Debug, Default)]
+pub struct AllowanceUsage {
+    pub limit: i64,
+    pub count: i64,
+    pub account_type: String,
+}
+
+impl From<Allowance> for AllowanceUsage {
+    fn from(value: Allowance) -> Self {
+        Self {
+            limit: value.limit,
+            count: value.count,
+            account_type: value.type_field,
+        }
+    }
+}
+
+pub fn allowance(api: String) -> anyhow::Result<AllowanceUsage> {
+    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default().build().unwrap();
+    let resp = t.ureq(api.as_str())?;
+    Ok(resp.allowance.into())
+}
+
+pub struct AreaSearchResult {
+    pub area_id: String,
+    pub name: String,
+    pub region: String,
+}
+
+impl From<eskom_se_push_api::area_search::Area> for AreaSearchResult {
+    fn from(value: eskom_se_push_api::area_search::Area) -> Self {
+        Self {
+            name: value.name,
+            area_id: value.id,
+            region: value.region
+        }
+    }
+}
+
+pub fn area_search(api_key: String, search_term: String) -> anyhow::Result<Vec<AreaSearchResult>> {
+    let t = eskom_se_push_api::area_search::AreaSearchURLBuilder::default()
+    .search_term(search_term).build().unwrap();
+    let resp = t.ureq(api_key.as_str())?;
+    Ok(resp.areas.into_iter().map(|x| x.into()).collect())
+}
+
+pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
+    let t = eskom_se_push_api::area_info::AreaInfoURLBuilder::default()
+    .area_id(area_id).build().unwrap();
+    let resp = t.ureq(api_key.as_str())?;
+    Ok(resp.into())
+}
+
+impl From<eskom_se_push_api::area_info::AreaInfo> for AreaInfoResponse {
+    fn from(value: eskom_se_push_api::area_info::AreaInfo) -> Self {
+        Self {
+            events: value.events.into_iter().map(|x| x.into()).collect(),
+            info: value.info.into(),
+            schedule: value.schedule.into(),
+        }
+    }
+}
+
+impl From<eskom_se_push_api::area_info::Schedule> for Schedule {
+    fn from(value: eskom_se_push_api::area_info::Schedule) -> Self {
+        Self {
+            days: value.days.into_iter().map(|x| x.into()).collect(),
+            source: value.source,
+        }
+    }
+}
+
+impl From<eskom_se_push_api::area_info::Day> for Day {
+    fn from(value: eskom_se_push_api::area_info::Day) -> Self {
+        Self {
+            date: value.date,
+            name: value.name,
+            stages: value.stages
+        }
+    }
+}
+
+impl From<eskom_se_push_api::area_info::Info> for Info {
+    fn from(value: eskom_se_push_api::area_info::Info) -> Self {
+        Self {
+            name: value.name,
+            region: value.region,
+        }
+    }
+}
+
+impl From<eskom_se_push_api::area_info::Event> for Event {
+    fn from(value: eskom_se_push_api::area_info::Event) -> Self {
+        Self {
+            end: value.end,
+            note: value.note,
+            start: value.start,
+        }
+    }
+}
+
+pub struct AreaInfoResponse {
+    /// List of sorted events. Will be an empty list if not impacted
+    pub events: Vec<Event>,
+    /// Info of the region requested for
+    pub info: Info,
+    /// Raw loadshedding schedule, per stage (1-8)
+    /// `Note`: An empty list means no events for that stage
+    /// `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
+    pub schedule: Schedule,
+  }
+
+  pub struct Event {
+    /// End time of the event eg `2022-08-08T22:30:00+02:00`
+    pub end: String,
+    /// The stage of the event eg `Stage 2`
+    pub note: String,
+    /// Start time of the event eg `2022-08-08T20:00:00+02:00`
+    pub start: String,
+  }
+  
+  pub struct Info {
+    pub name: String,
+    pub region: String,
+  }
+  
+  pub struct Schedule {
+    /// Vec of the days and there stages
+    pub days: Vec<Day>,
+    /// Where the data was retrieved from.
+    pub source: String,
+  }
+  
+  pub struct Day {
+    /// Date the stages are relevant to eg `2022-08-08`
+    pub date: String,
+    /// Day of week eg `Monday`
+    pub name: String,
+    /// Raw loadshedding schedule, per stage (1-8).
+    /// Index 0 refers to `Stage 1`, index 1 is `Stage 2` and so on and so forth.
+    /// Formatted for display purposes `(i.e. 20:00-22:30)`.
+    /// Any adjacent events have been merged into a single event `(e.g. 12:00-14:30 & 14:00-16:30 become 12:00-16:30)`.
+    ///  * `Note`: An empty list means no events for that stage
+    ///  * `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
+    pub stages: Vec<Vec<String>>,
+  }

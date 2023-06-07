@@ -21,6 +21,29 @@ pub extern "C" fn wire_test_api_key(port_: i64, api: *mut wire_uint_8_list) {
     wire_test_api_key_impl(port_, api)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_allowance(port_: i64, api: *mut wire_uint_8_list) {
+    wire_allowance_impl(port_, api)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_area_search(
+    port_: i64,
+    api: *mut wire_uint_8_list,
+    search_term: *mut wire_uint_8_list,
+) {
+    wire_area_search_impl(port_, api, search_term)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_area_info(
+    port_: i64,
+    api: *mut wire_uint_8_list,
+    area_id: *mut wire_uint_8_list,
+) {
+    wire_area_info_impl(port_, api, area_id)
+}
+
 // Section: allocate functions
 
 #[no_mangle]
