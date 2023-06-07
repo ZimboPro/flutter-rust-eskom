@@ -22,4 +22,9 @@ clean:
 serve *args='':
     flutter pub run flutter_rust_bridge:serve {{args}}
 
+platform := os()
+
+run:
+    flutter run -d {{platform}}
+
 # vim:expandtab:sw=4:ts=4
