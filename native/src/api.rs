@@ -5,8 +5,8 @@
 use std::time::Duration;
 
 use eskom_se_push_api::allowance::Allowance;
-use flutter_rust_bridge::StreamSink;
 use eskom_se_push_api::Endpoint;
+use flutter_rust_bridge::StreamSink;
 
 // A plain enum without any fields. This is similar to Dart- or C-style enums.
 // flutter_rust_bridge is capable of generating code for enums with fields
@@ -80,7 +80,9 @@ pub fn tick(sink: StreamSink<usize>) -> anyhow::Result<()> {
 }
 
 pub fn test_api_key(api: String) -> bool {
-    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default().build().unwrap();
+    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default()
+        .build()
+        .unwrap();
 
     let resp = t.ureq(api.as_str());
     if let Ok(_response) = resp {
@@ -107,7 +109,9 @@ impl From<Allowance> for AllowanceUsage {
 }
 
 pub fn allowance(api: String) -> anyhow::Result<AllowanceUsage> {
-    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default().build().unwrap();
+    let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default()
+        .build()
+        .unwrap();
     let resp = t.ureq(api.as_str())?;
     Ok(resp.allowance.into())
 }
@@ -123,21 +127,25 @@ impl From<eskom_se_push_api::area_search::Area> for AreaSearchResult {
         Self {
             name: value.name,
             area_id: value.id,
-            region: value.region
+            region: value.region,
         }
     }
 }
 
 pub fn area_search(api_key: String, search_term: String) -> anyhow::Result<Vec<AreaSearchResult>> {
     let t = eskom_se_push_api::area_search::AreaSearchURLBuilder::default()
-    .search_term(search_term).build().unwrap();
+        .search_term(search_term)
+        .build()
+        .unwrap();
     let resp = t.ureq(api_key.as_str())?;
     Ok(resp.areas.into_iter().map(|x| x.into()).collect())
 }
 
 pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
     let t = eskom_se_push_api::area_info::AreaInfoURLBuilder::default()
-    .area_id(area_id).build().unwrap();
+        .area_id(area_id)
+        .build()
+        .unwrap();
     let resp = t.ureq(api_key.as_str())?;
     Ok(resp.into())
 }
@@ -166,7 +174,7 @@ impl From<eskom_se_push_api::area_info::Day> for Day {
         Self {
             date: value.date,
             name: value.name,
-            stages: value.stages
+            stages: value.stages,
         }
     }
 }
@@ -199,30 +207,30 @@ pub struct AreaInfoResponse {
     /// `Note`: An empty list means no events for that stage
     /// `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
     pub schedule: Schedule,
-  }
+}
 
-  pub struct Event {
+pub struct Event {
     /// End time of the event eg `2022-08-08T22:30:00+02:00`
     pub end: String,
     /// The stage of the event eg `Stage 2`
     pub note: String,
     /// Start time of the event eg `2022-08-08T20:00:00+02:00`
     pub start: String,
-  }
-  
-  pub struct Info {
+}
+
+pub struct Info {
     pub name: String,
     pub region: String,
-  }
-  
-  pub struct Schedule {
+}
+
+pub struct Schedule {
     /// Vec of the days and there stages
     pub days: Vec<Day>,
     /// Where the data was retrieved from.
     pub source: String,
-  }
-  
-  pub struct Day {
+}
+
+pub struct Day {
     /// Date the stages are relevant to eg `2022-08-08`
     pub date: String,
     /// Day of week eg `Monday`
@@ -234,4 +242,4 @@ pub struct AreaInfoResponse {
     ///  * `Note`: An empty list means no events for that stage
     ///  * `Note`: Some Municipalities/Regions don't have Stage 5-8 schedules (and there will be 4 records instead of 8 in this list. Stage 5 upwards you can assume Stage 4 schedule impact.
     pub stages: Vec<Vec<String>>,
-  }
+}
