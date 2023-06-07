@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/window_manager.dart';
 import 'ffi.dart' if (dart.library.html) 'ffi_web.dart';
+import 'screens/area.dart';
 import 'screens/setup.dart';
 import 'screens/splash.dart';
 
@@ -45,9 +46,16 @@ final _router = GoRouter(
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
-      name: "Setup",
+      name: "setup",
       path: "/setup",
       builder: (context, state) => const SetupPage(),
+    ),
+    GoRoute(
+      name: "area",
+      path: "/area",
+      builder: (context, state) => AreaPage(
+        apiKey: state.queryParameters['apiKey']!,
+      ),
     )
   ],
 );

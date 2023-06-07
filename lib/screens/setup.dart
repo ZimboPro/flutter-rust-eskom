@@ -95,7 +95,7 @@ class _SetupPageState extends State<SetupPage> {
                       child: RichText(
                           text: TextSpan(children: [
                         const TextSpan(
-                            style: const TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.black),
                             text:
                                 "If you don't have an API key, you can apply for it "),
                         TextSpan(
@@ -116,7 +116,7 @@ class _SetupPageState extends State<SetupPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(50),
+                  padding: const EdgeInsets.all(50),
                   child: ElevatedButton(
                       onPressed: isValidApiKey
                           ? () => context.replaceNamed("home")

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const apiPreferenceKey = "ESKOM_API_KEY";
+const hasAreaKey = "LOCATION_SELECTED";
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,9 +19,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _prefs.then((value) {
-      final apiKey = value.get(apiPreferenceKey);
+      final apiKey = value.getString(apiPreferenceKey);
+      final hasLocation = value.getBool(hasAreaKey);
       if (apiKey == null) {
         context.replaceNamed("setup");
+      } else if (apiKey.isNotEmpty &&
+          (hasLocation == null || hasLocation == false)) {
+        context.replaceNamed("area", queryParameters: {"apiKey": apiKey});
       } else {
         context.replaceNamed("home", queryParameters: {"apiKey": apiKey});
       }
