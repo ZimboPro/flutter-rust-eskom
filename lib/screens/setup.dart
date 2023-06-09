@@ -119,7 +119,10 @@ class _SetupPageState extends State<SetupPage> {
                   padding: const EdgeInsets.all(50),
                   child: ElevatedButton(
                       onPressed: isValidApiKey
-                          ? () => context.replaceNamed("home")
+                          ? () => context.replaceNamed("area",
+                                  queryParameters: {
+                                    "apiKey": apiKeyController.value
+                                  })
                           : null,
                       child: const Text("Next")),
                 )

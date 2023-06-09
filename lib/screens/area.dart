@@ -17,97 +17,99 @@ class _AreaPageState extends State<AreaPage> {
   bool hasArea = false;
   bool testingArea = false;
 
-  List<AreaSearchResult> searchResults = [];
+  List<AreaSearchResult> searchResults = [
+    const AreaSearchResult(areaId: "ASD", name: "NAME", region: "REGION")
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                  child: Column(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 300,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Enter an area that should be monitored."),
                   // TODO improve wording
                   const Text("Be as accurate as possible before searching."),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 400,
-                        child: TextField(
-                          enabled: !testingArea,
-                          autofocus: true,
-                          textAlign: TextAlign.center,
-                          controller: areaController,
-                          // onChanged: (value) {
-                          //   setState(() {
-                          //     enableTestBtn = value.trim().isNotEmpty;
-                          //   });
-                          // },
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: ElevatedButton(
-                          child: const Text("Search"),
-                          onPressed: () async {
-                            setState(() {
-                              testingArea = true;
-                            });
-                            final response = await api.areaSearch(
-                                api: widget.apiKey,
-                                searchTerm: areaController.text.trim());
-                            setState(() {
-                              searchResults = response;
-                              testingArea = true;
-                            });
-                          },
-                        ),
-                      )
-                    ],
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      enabled: !testingArea,
+                      autofocus: true,
+                      textAlign: TextAlign.center,
+                      controller: areaController,
+                      // onChanged: (value) {
+                      //   setState(() {
+                      //     enableTestBtn = value.trim().isNotEmpty;
+                      //   });
+                      // },
+                    ),
                   ),
-                  // searchResults.isNotEmpty
-                  //     ? OverflowBox(
-                  //         child: ListView.builder(
-                  //             scrollDirection: Axis.vertical,
-                  //             itemCount: searchResults.length,
-
-                  //             itemBuilder: (context, index) {
-                  //               final item = searchResults[index];
-                  //               return ListTile(
-                  //                 title: Text(
-                  //                   item.name,
-                  //                   style: const TextStyle(color: Colors.black),
-                  //                 ),
-                  //                 subtitle: Text(
-                  //                   item.region,
-                  //                   style: const TextStyle(color: Colors.black),
-                  //                 ),
-                  //               );
-                  //             }),
-                  //       )
-                  //     : Container()
-                ],
-              )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(50),
+                  Container(
+                    padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
-                        onPressed:
-                            hasArea ? () => context.replaceNamed("home") : null,
-                        child: const Text("Done")),
+                      child: const Text("Search"),
+                      onPressed: () async {
+                        setState(() {
+                          testingArea = true;
+                        });
+                        final response = await api.areaSearch(
+                            api: widget.apiKey,
+                            searchTerm: areaController.text.trim());
+                        setState(() {
+                          searchResults = response;
+                          testingArea = false;
+                        });
+                      },
+                    ),
                   )
                 ],
-              )
-            ]),
+              ),
+            ),
+            SizedBox(
+              width: 300,
+              child: ListView.builder(
+                  clipBehavior: Clip.antiAlias,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    final item = searchResults[index];
+                    return ListTile(
+                      tileColor: Colors.black12,
+                      title: Text(
+                        "${item.name} - ${item.region}",
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      onTap: () {},
+                    );
+                  }),
+            )
+          ],
+        ),
+      )),
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: ElevatedButton(
+                onPressed: hasArea
+                    ? () => context.replaceNamed("home",
+                        queryParameters: {'apiKey': widget.apiKey})
+                    : null,
+                child: const Text("Done")),
+          )
+        ],
       ),
     );
   }
