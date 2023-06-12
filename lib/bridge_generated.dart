@@ -74,13 +74,13 @@ class NativeImpl implements Native {
         argNames: [],
       );
 
-  Future<bool> testApiKey({required String api, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(api);
+  Future<bool> testApiKey({required String apiKey, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(apiKey);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_test_api_key(port_, arg0),
       parseSuccessData: _wire2api_bool,
       constMeta: kTestApiKeyConstMeta,
-      argValues: [api],
+      argValues: [apiKey],
       hint: hint,
     ));
   }
@@ -88,16 +88,16 @@ class NativeImpl implements Native {
   FlutterRustBridgeTaskConstMeta get kTestApiKeyConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "test_api_key",
-        argNames: ["api"],
+        argNames: ["apiKey"],
       );
 
-  Future<AllowanceUsage> allowance({required String api, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(api);
+  Future<AllowanceUsage> allowance({required String apiKey, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(apiKey);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_allowance(port_, arg0),
       parseSuccessData: _wire2api_allowance_usage,
       constMeta: kAllowanceConstMeta,
-      argValues: [api],
+      argValues: [apiKey],
       hint: hint,
     ));
   }
@@ -105,18 +105,18 @@ class NativeImpl implements Native {
   FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "allowance",
-        argNames: ["api"],
+        argNames: ["apiKey"],
       );
 
   Future<List<AreaSearchResult>> areaSearch(
-      {required String api, required String searchTerm, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(api);
+      {required String apiKey, required String searchTerm, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(apiKey);
     var arg1 = _platform.api2wire_String(searchTerm);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_area_search(port_, arg0, arg1),
       parseSuccessData: _wire2api_list_area_search_result,
       constMeta: kAreaSearchConstMeta,
-      argValues: [api, searchTerm],
+      argValues: [apiKey, searchTerm],
       hint: hint,
     ));
   }
@@ -124,18 +124,18 @@ class NativeImpl implements Native {
   FlutterRustBridgeTaskConstMeta get kAreaSearchConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "area_search",
-        argNames: ["api", "searchTerm"],
+        argNames: ["apiKey", "searchTerm"],
       );
 
   Future<AreaInfoResponse> areaInfo(
-      {required String api, required String areaId, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(api);
+      {required String apiKey, required String areaId, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(apiKey);
     var arg1 = _platform.api2wire_String(areaId);
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_area_info(port_, arg0, arg1),
       parseSuccessData: _wire2api_area_info_response,
       constMeta: kAreaInfoConstMeta,
-      argValues: [api, areaId],
+      argValues: [apiKey, areaId],
       hint: hint,
     ));
   }
@@ -143,7 +143,26 @@ class NativeImpl implements Native {
   FlutterRustBridgeTaskConstMeta get kAreaInfoConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "area_info",
-        argNames: ["api", "areaId"],
+        argNames: ["apiKey", "areaId"],
+      );
+
+  Future<AreaInfoResponse> addArea(
+      {required String apiKey, required String areaId, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(apiKey);
+    var arg1 = _platform.api2wire_String(areaId);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_add_area(port_, arg0, arg1),
+      parseSuccessData: _wire2api_area_info_response,
+      constMeta: kAddAreaConstMeta,
+      argValues: [apiKey, areaId],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAddAreaConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "add_area",
+        argNames: ["apiKey", "areaId"],
       );
 
   void dispose() {
@@ -447,11 +466,11 @@ class NativeWire implements FlutterRustBridgeWireBase {
 
   void wire_test_api_key(
     int port_,
-    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> api_key,
   ) {
     return _wire_test_api_key(
       port_,
-      api,
+      api_key,
     );
   }
 
@@ -464,11 +483,11 @@ class NativeWire implements FlutterRustBridgeWireBase {
 
   void wire_allowance(
     int port_,
-    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> api_key,
   ) {
     return _wire_allowance(
       port_,
-      api,
+      api_key,
     );
   }
 
@@ -481,12 +500,12 @@ class NativeWire implements FlutterRustBridgeWireBase {
 
   void wire_area_search(
     int port_,
-    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> api_key,
     ffi.Pointer<wire_uint_8_list> search_term,
   ) {
     return _wire_area_search(
       port_,
-      api,
+      api_key,
       search_term,
     );
   }
@@ -501,12 +520,12 @@ class NativeWire implements FlutterRustBridgeWireBase {
 
   void wire_area_info(
     int port_,
-    ffi.Pointer<wire_uint_8_list> api,
+    ffi.Pointer<wire_uint_8_list> api_key,
     ffi.Pointer<wire_uint_8_list> area_id,
   ) {
     return _wire_area_info(
       port_,
-      api,
+      api_key,
       area_id,
     );
   }
@@ -516,6 +535,26 @@ class NativeWire implements FlutterRustBridgeWireBase {
           ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
               ffi.Pointer<wire_uint_8_list>)>>('wire_area_info');
   late final _wire_area_info = _wire_area_infoPtr.asFunction<
+      void Function(
+          int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_add_area(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> api_key,
+    ffi.Pointer<wire_uint_8_list> area_id,
+  ) {
+    return _wire_add_area(
+      port_,
+      api_key,
+      area_id,
+    );
+  }
+
+  late final _wire_add_areaPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_add_area');
+  late final _wire_add_area = _wire_add_areaPtr.asFunction<
       void Function(
           int, ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 

@@ -68,7 +68,7 @@ class _SetupPageState extends State<SetupPage> {
                                     const SnackBar(
                                         content: Text("Testing API key")));
                                 final valid = await api.testApiKey(
-                                    api: apiKeyController.value.text.trim());
+                                    apiKey: apiKeyController.value.text.trim());
                                 if (valid) {
                                   _prefs.then((value) => value.setString(
                                       apiPreferenceKey,
