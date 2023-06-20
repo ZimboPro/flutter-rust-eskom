@@ -16,6 +16,7 @@ class _AreaPageState extends State<AreaPage> {
 
   bool hasArea = false;
   bool testingArea = false;
+  bool enableBtn = false;
 
   List<AreaSearchResult> searchResults = [
     const AreaSearchResult(areaId: "ASD", name: "NAME", region: "REGION")
@@ -46,29 +47,31 @@ class _AreaPageState extends State<AreaPage> {
                       autofocus: true,
                       textAlign: TextAlign.center,
                       controller: areaController,
-                      // onChanged: (value) {
-                      //   setState(() {
-                      //     enableTestBtn = value.trim().isNotEmpty;
-                      //   });
-                      // },
+                      onChanged: (value) {
+                        setState(() {
+                          enableBtn = value.trim().isNotEmpty;
+                        });
+                      },
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
+                      onPressed: enableBtn
+                          ? () async {
+                              setState(() {
+                                testingArea = true;
+                              });
+                              final response = await api.areaSearch(
+                                  apiKey: widget.apiKey,
+                                  searchTerm: areaController.text.trim());
+                              setState(() {
+                                searchResults = response;
+                                testingArea = false;
+                              });
+                            }
+                          : null,
                       child: const Text("Search"),
-                      onPressed: () async {
-                        setState(() {
-                          testingArea = true;
-                        });
-                        final response = await api.areaSearch(
-                            api: widget.apiKey,
-                            searchTerm: areaController.text.trim());
-                        setState(() {
-                          searchResults = response;
-                          testingArea = false;
-                        });
-                      },
                     ),
                   )
                 ],
@@ -89,7 +92,13 @@ class _AreaPageState extends State<AreaPage> {
                         "${item.name} - ${item.region}",
                         style: const TextStyle(color: Colors.black),
                       ),
-                      onTap: () {},
+                      onTap: () async {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Added '${item.name} - ${item.region}' to your list of areas.")));
+                        await api.addArea(
+                            apiKey: widget.apiKey, areaId: item.areaId);
+                      },
                     );
                   }),
             )

@@ -79,7 +79,7 @@ pub fn tick(sink: StreamSink<usize>) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn test_api_key(api: String) -> bool {
+pub fn test_api_key(api_key: String) -> bool {
     let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default()
         .build()
         .unwrap();
@@ -148,6 +148,11 @@ pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoRes
         .unwrap();
     let response = t.ureq(api_key.as_str())?;
     Ok(response.into())
+}
+
+pub fn add_area(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
+    // TODO add area to list/config
+    area_info(api_key, area_id)
 }
 
 impl From<eskom_se_push_api::area_info::AreaInfo> for AreaInfoResponse {

@@ -21,23 +21,28 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kTickConstMeta;
 
-  Future<bool> testApiKey({required String api, dynamic hint});
+  Future<bool> testApiKey({required String apiKey, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kTestApiKeyConstMeta;
 
-  Future<AllowanceUsage> allowance({required String api, dynamic hint});
+  Future<AllowanceUsage> allowance({required String apiKey, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta;
 
   Future<List<AreaSearchResult>> areaSearch(
-      {required String api, required String searchTerm, dynamic hint});
+      {required String apiKey, required String searchTerm, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAreaSearchConstMeta;
 
   Future<AreaInfoResponse> areaInfo(
-      {required String api, required String areaId, dynamic hint});
+      {required String apiKey, required String areaId, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAreaInfoConstMeta;
+
+  Future<AreaInfoResponse> addArea(
+      {required String apiKey, required String areaId, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAddAreaConstMeta;
 }
 
 class AllowanceUsage {
