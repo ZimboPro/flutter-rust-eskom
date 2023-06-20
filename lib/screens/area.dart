@@ -25,12 +25,14 @@ class _AreaPageState extends State<AreaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
           child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
             SizedBox(
               width: 300,
@@ -79,28 +81,32 @@ class _AreaPageState extends State<AreaPage> {
             ),
             SizedBox(
               width: 300,
-              child: ListView.builder(
-                  clipBehavior: Clip.antiAlias,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: searchResults.length,
-                  itemBuilder: (context, index) {
-                    final item = searchResults[index];
-                    return ListTile(
-                      tileColor: Colors.black12,
-                      title: Text(
-                        "${item.name} - ${item.region}",
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      onTap: () async {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                "Added '${item.name} - ${item.region}' to your list of areas.")));
-                        await api.addArea(
-                            apiKey: widget.apiKey, areaId: item.areaId);
-                      },
-                    );
-                  }),
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.separated(
+                    clipBehavior: Clip.antiAlias,
+                    scrollDirection: Axis.vertical,
+                    itemCount: searchResults.length,
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                    itemBuilder: (context, index) {
+                      final item = searchResults[index];
+                      return ListTile(
+                        title: Text(
+                          "${item.name} - ${item.region}",
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                        onTap: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "Added '${item.name} - ${item.region}' to your list of areas.")));
+                          await api.addArea(
+                              apiKey: widget.apiKey, areaId: item.areaId);
+                        },
+                      );
+                    }),
+              ),
             )
           ],
         ),
