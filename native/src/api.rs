@@ -84,7 +84,7 @@ pub fn test_api_key(api_key: String) -> bool {
         .build()
         .unwrap();
 
-    let api_call = t.ureq(api.as_str());
+    let api_call = t.ureq(api_key.as_str());
     if let Ok(_response) = api_call {
         return true;
     }
