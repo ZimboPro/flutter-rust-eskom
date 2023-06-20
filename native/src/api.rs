@@ -84,8 +84,8 @@ pub fn test_api_key(api: String) -> bool {
         .build()
         .unwrap();
 
-    let resp = t.ureq(api.as_str());
-    if let Ok(_response) = resp {
+    let api_call = t.ureq(api.as_str());
+    if let Ok(_response) = api_call {
         return true;
     }
     false
@@ -108,12 +108,12 @@ impl From<Allowance> for AllowanceUsage {
     }
 }
 
-pub fn allowance(api: String) -> anyhow::Result<AllowanceUsage> {
+pub fn allowance(api_key: String) -> anyhow::Result<AllowanceUsage> {
     let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default()
         .build()
         .unwrap();
-    let resp = t.ureq(api.as_str())?;
-    Ok(resp.allowance.into())
+    let response = t.ureq(api_key.as_str())?;
+    Ok(response.allowance.into())
 }
 
 pub struct AreaSearchResult {
@@ -137,8 +137,8 @@ pub fn area_search(api_key: String, search_term: String) -> anyhow::Result<Vec<A
         .search_term(search_term)
         .build()
         .unwrap();
-    let resp = t.ureq(api_key.as_str())?;
-    Ok(resp.areas.into_iter().map(|x| x.into()).collect())
+    let response = t.ureq(api_key.as_str())?;
+    Ok(response.areas.into_iter().map(|x| x.into()).collect())
 }
 
 pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
@@ -146,8 +146,8 @@ pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoRes
         .area_id(area_id)
         .build()
         .unwrap();
-    let resp = t.ureq(api_key.as_str())?;
-    Ok(resp.into())
+    let response = t.ureq(api_key.as_str())?;
+    Ok(response.into())
 }
 
 impl From<eskom_se_push_api::area_info::AreaInfo> for AreaInfoResponse {
