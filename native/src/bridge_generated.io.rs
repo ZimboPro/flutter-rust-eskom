@@ -22,35 +22,28 @@ pub extern "C" fn wire_test_api_key(port_: i64, api_key: *mut wire_uint_8_list) 
 }
 
 #[no_mangle]
+pub extern "C" fn wire_set_api_key(port_: i64, api_key: *mut wire_uint_8_list) {
+    wire_set_api_key_impl(port_, api_key)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_allowance(port_: i64, api_key: *mut wire_uint_8_list) {
     wire_allowance_impl(port_, api_key)
 }
 
 #[no_mangle]
-pub extern "C" fn wire_area_search(
-    port_: i64,
-    api_key: *mut wire_uint_8_list,
-    search_term: *mut wire_uint_8_list,
-) {
-    wire_area_search_impl(port_, api_key, search_term)
+pub extern "C" fn wire_area_search(port_: i64, search_term: *mut wire_uint_8_list) {
+    wire_area_search_impl(port_, search_term)
 }
 
 #[no_mangle]
-pub extern "C" fn wire_area_info(
-    port_: i64,
-    api_key: *mut wire_uint_8_list,
-    area_id: *mut wire_uint_8_list,
-) {
-    wire_area_info_impl(port_, api_key, area_id)
+pub extern "C" fn wire_area_info(port_: i64, area_id: *mut wire_uint_8_list) {
+    wire_area_info_impl(port_, area_id)
 }
 
 #[no_mangle]
-pub extern "C" fn wire_add_area(
-    port_: i64,
-    api_key: *mut wire_uint_8_list,
-    area_id: *mut wire_uint_8_list,
-) {
-    wire_add_area_impl(port_, api_key, area_id)
+pub extern "C" fn wire_add_area(port_: i64, area_id: *mut wire_uint_8_list) {
+    wire_add_area_impl(port_, area_id)
 }
 
 // Section: allocate functions

@@ -64,6 +64,19 @@ fn wire_test_api_key_impl(port_: MessagePort, api_key: impl Wire2Api<String> + U
         },
     )
 }
+fn wire_set_api_key_impl(port_: MessagePort, api_key: impl Wire2Api<String> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "set_api_key",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_api_key = api_key.wire2api();
+            move |task_callback| Ok(set_api_key(api_api_key))
+        },
+    )
+}
 fn wire_allowance_impl(port_: MessagePort, api_key: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
@@ -77,11 +90,7 @@ fn wire_allowance_impl(port_: MessagePort, api_key: impl Wire2Api<String> + Unwi
         },
     )
 }
-fn wire_area_search_impl(
-    port_: MessagePort,
-    api_key: impl Wire2Api<String> + UnwindSafe,
-    search_term: impl Wire2Api<String> + UnwindSafe,
-) {
+fn wire_area_search_impl(port_: MessagePort, search_term: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "area_search",
@@ -89,17 +98,12 @@ fn wire_area_search_impl(
             mode: FfiCallMode::Normal,
         },
         move || {
-            let api_api_key = api_key.wire2api();
             let api_search_term = search_term.wire2api();
-            move |task_callback| area_search(api_api_key, api_search_term)
+            move |task_callback| area_search(api_search_term)
         },
     )
 }
-fn wire_area_info_impl(
-    port_: MessagePort,
-    api_key: impl Wire2Api<String> + UnwindSafe,
-    area_id: impl Wire2Api<String> + UnwindSafe,
-) {
+fn wire_area_info_impl(port_: MessagePort, area_id: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "area_info",
@@ -107,17 +111,12 @@ fn wire_area_info_impl(
             mode: FfiCallMode::Normal,
         },
         move || {
-            let api_api_key = api_key.wire2api();
             let api_area_id = area_id.wire2api();
-            move |task_callback| area_info(api_api_key, api_area_id)
+            move |task_callback| area_info(api_area_id)
         },
     )
 }
-fn wire_add_area_impl(
-    port_: MessagePort,
-    api_key: impl Wire2Api<String> + UnwindSafe,
-    area_id: impl Wire2Api<String> + UnwindSafe,
-) {
+fn wire_add_area_impl(port_: MessagePort, area_id: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
             debug_name: "add_area",
@@ -125,9 +124,8 @@ fn wire_add_area_impl(
             mode: FfiCallMode::Normal,
         },
         move || {
-            let api_api_key = api_key.wire2api();
             let api_area_id = area_id.wire2api();
-            move |task_callback| add_area(api_api_key, api_area_id)
+            move |task_callback| add_area(api_area_id)
         },
     )
 }
