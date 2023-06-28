@@ -18,9 +18,7 @@ class _AreaPageState extends State<AreaPage> {
   bool testingArea = false;
   bool enableBtn = false;
 
-  List<AreaSearchResult> searchResults = [
-    const AreaSearchResult(areaId: "ASD", name: "NAME", region: "REGION")
-  ];
+  List<AreaSearchResult> searchResults = [];
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +61,6 @@ class _AreaPageState extends State<AreaPage> {
                                 testingArea = true;
                               });
                               final response = await api.areaSearch(
-                                  apiKey: widget.apiKey,
                                   searchTerm: areaController.text.trim());
                               setState(() {
                                 searchResults = response;
@@ -96,8 +93,7 @@ class _AreaPageState extends State<AreaPage> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
                                 "Added '${item.name} - ${item.region}' to your list of areas.")));
-                        await api.addArea(
-                            apiKey: widget.apiKey, areaId: item.areaId);
+                        await api.addArea(areaId: item.areaId);
                       },
                     );
                   }),
