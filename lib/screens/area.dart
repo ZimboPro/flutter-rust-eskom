@@ -98,8 +98,7 @@ class _AreaPageState extends State<AreaPage> {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
                                   "Added '${item.name} - ${item.region}' to your list of areas.")));
-                          await api.addArea(
-                              apiKey: widget.apiKey, areaId: item.areaId);
+                          await api.addArea(areaId: item.areaId);
                         },
                       );
                     }),
