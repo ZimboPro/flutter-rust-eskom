@@ -25,22 +25,24 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kTestApiKeyConstMeta;
 
+  Future<void> setApiKey({required String apiKey, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSetApiKeyConstMeta;
+
   Future<AllowanceUsage> allowance({required String apiKey, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta;
 
   Future<List<AreaSearchResult>> areaSearch(
-      {required String apiKey, required String searchTerm, dynamic hint});
+      {required String searchTerm, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAreaSearchConstMeta;
 
-  Future<AreaInfoResponse> areaInfo(
-      {required String apiKey, required String areaId, dynamic hint});
+  Future<AreaInfoResponse> areaInfo({required String areaId, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAreaInfoConstMeta;
 
-  Future<AreaInfoResponse> addArea(
-      {required String apiKey, required String areaId, dynamic hint});
+  Future<AreaInfoResponse> addArea({required String areaId, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAddAreaConstMeta;
 }

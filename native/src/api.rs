@@ -22,6 +22,8 @@ pub enum Platform {
     Wasm,
 }
 
+static API_KEY: state::InitCell<String> = state::InitCell::new();
+
 // A function definition in Rust. Similar to Dart, the return type must always be named
 // and is never inferred.
 pub fn platform() -> Platform {
@@ -84,11 +86,16 @@ pub fn test_api_key(api_key: String) -> bool {
         .build()
         .unwrap();
 
-    let resp = t.ureq(api_key.as_str());
-    if let Ok(_response) = resp {
+    let api_call = t.ureq(api_key.as_str());
+    if let Ok(_response) = api_call {
+        set_api_key(api_key);
         return true;
     }
     false
+}
+
+pub fn set_api_key(api_key: String) {
+    API_KEY.set(api_key);
 }
 
 #[derive(Debug, Default)]
@@ -112,8 +119,8 @@ pub fn allowance(api_key: String) -> anyhow::Result<AllowanceUsage> {
     let t = eskom_se_push_api::allowance::AllowanceCheckURLBuilder::default()
         .build()
         .unwrap();
-    let resp = t.ureq(api_key.as_str())?;
-    Ok(resp.allowance.into())
+    let response = t.ureq(api_key.as_str())?;
+    Ok(response.allowance.into())
 }
 
 pub struct AreaSearchResult {
@@ -132,27 +139,27 @@ impl From<eskom_se_push_api::area_search::Area> for AreaSearchResult {
     }
 }
 
-pub fn area_search(api_key: String, search_term: String) -> anyhow::Result<Vec<AreaSearchResult>> {
+pub fn area_search(search_term: String) -> anyhow::Result<Vec<AreaSearchResult>> {
     let t = eskom_se_push_api::area_search::AreaSearchURLBuilder::default()
         .search_term(search_term)
         .build()
         .unwrap();
-    let resp = t.ureq(api_key.as_str())?;
-    Ok(resp.areas.into_iter().map(|x| x.into()).collect())
+    let response = t.ureq(API_KEY.get())?;
+    Ok(response.areas.into_iter().map(|x| x.into()).collect())
 }
 
-pub fn area_info(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
+pub fn area_info(area_id: String) -> anyhow::Result<AreaInfoResponse> {
     let t = eskom_se_push_api::area_info::AreaInfoURLBuilder::default()
         .area_id(area_id)
         .build()
         .unwrap();
-    let resp = t.ureq(api_key.as_str())?;
-    Ok(resp.into())
+    let response = t.ureq(API_KEY.get())?;
+    Ok(response.into())
 }
 
-pub fn add_area(api_key: String, area_id: String) -> anyhow::Result<AreaInfoResponse> {
+pub fn add_area(area_id: String) -> anyhow::Result<AreaInfoResponse> {
     // TODO add area to list/config
-    area_info(api_key, area_id)
+    area_info(area_id)
 }
 
 impl From<eskom_se_push_api::area_info::AreaInfo> for AreaInfoResponse {
