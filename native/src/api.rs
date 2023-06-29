@@ -23,6 +23,7 @@ pub enum Platform {
 }
 
 static API_KEY: state::InitCell<String> = state::InitCell::new();
+static CACHE_DIR: state::InitCell<String> = state::InitCell::new();
 
 // A function definition in Rust. Similar to Dart, the return type must always be named
 // and is never inferred.
@@ -96,6 +97,10 @@ pub fn test_api_key(api_key: String) -> bool {
 
 pub fn set_api_key(api_key: String) {
     API_KEY.set(api_key);
+}
+
+pub fn set_cache_dir(cache_dir: String) {
+    CACHE_DIR.set(cache_dir);
 }
 
 #[derive(Debug, Default)]

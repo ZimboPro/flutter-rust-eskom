@@ -27,6 +27,11 @@ pub extern "C" fn wire_set_api_key(port_: i64, api_key: *mut wire_uint_8_list) {
 }
 
 #[no_mangle]
+pub extern "C" fn wire_set_cache_dir(port_: i64, cache_dir: *mut wire_uint_8_list) {
+    wire_set_cache_dir_impl(port_, cache_dir)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_allowance(port_: i64, api_key: *mut wire_uint_8_list) {
     wire_allowance_impl(port_, api_key)
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ffi.dart';
@@ -23,6 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
     _prefs.then((value) async {
       final apiKey = value.getString(apiPreferenceKey);
       final hasLocation = value.getBool(hasAreaKey);
+      final supportDir = await getApplicationSupportDirectory();
+      api.setCacheDir(cacheDir: supportDir.path);
       if (apiKey == null) {
         context.replaceNamed("setup");
       } else if (apiKey.isNotEmpty &&

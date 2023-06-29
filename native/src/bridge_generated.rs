@@ -77,6 +77,19 @@ fn wire_set_api_key_impl(port_: MessagePort, api_key: impl Wire2Api<String> + Un
         },
     )
 }
+fn wire_set_cache_dir_impl(port_: MessagePort, cache_dir: impl Wire2Api<String> + UnwindSafe) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "set_cache_dir",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_cache_dir = cache_dir.wire2api();
+            move |task_callback| Ok(set_cache_dir(api_cache_dir))
+        },
+    )
+}
 fn wire_allowance_impl(port_: MessagePort, api_key: impl Wire2Api<String> + UnwindSafe) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {

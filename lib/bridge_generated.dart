@@ -108,6 +108,23 @@ class NativeImpl implements Native {
         argNames: ["apiKey"],
       );
 
+  Future<void> setCacheDir({required String cacheDir, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(cacheDir);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_set_cache_dir(port_, arg0),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kSetCacheDirConstMeta,
+      argValues: [cacheDir],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSetCacheDirConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "set_cache_dir",
+        argNames: ["cacheDir"],
+      );
+
   Future<AllowanceUsage> allowance({required String apiKey, dynamic hint}) {
     var arg0 = _platform.api2wire_String(apiKey);
     return _platform.executeNormal(FlutterRustBridgeTask(
@@ -512,6 +529,23 @@ class NativeWire implements FlutterRustBridgeWireBase {
           ffi.Void Function(
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_set_api_key');
   late final _wire_set_api_key = _wire_set_api_keyPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_set_cache_dir(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> cache_dir,
+  ) {
+    return _wire_set_cache_dir(
+      port_,
+      cache_dir,
+    );
+  }
+
+  late final _wire_set_cache_dirPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_set_cache_dir');
+  late final _wire_set_cache_dir = _wire_set_cache_dirPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   void wire_allowance(

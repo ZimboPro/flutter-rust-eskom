@@ -29,6 +29,10 @@ abstract class Native {
 
   FlutterRustBridgeTaskConstMeta get kSetApiKeyConstMeta;
 
+  Future<void> setCacheDir({required String cacheDir, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSetCacheDirConstMeta;
+
   Future<AllowanceUsage> allowance({required String apiKey, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kAllowanceConstMeta;
